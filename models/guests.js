@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const guestSchema = mongoose.Schema({
+const { Schema } = mongoose; // import Schema
+
+const guestSchema = new mongoose.Schema({
     eventId: { type: Schema.Types.ObjectId, ref: "Event" },
     name: String,
     phone: String,
@@ -7,6 +9,7 @@ const guestSchema = mongoose.Schema({
     address: String,
     relationship: String,
     attendance: { type: Boolean, default: false },
-    tableId: { type: Schema.Types.ObjectId, ref: "Table", nullable: true },
+    tableId: { type: Schema.Types.ObjectId, ref: "Table", default: null },
 });
+
 module.exports = mongoose.model("Guest", guestSchema);

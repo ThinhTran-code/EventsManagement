@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 const eventSchema = mongoose.Schema({
     requestId: { type: Schema.Types.ObjectId, ref: "Request" },
     coupleName: String,
