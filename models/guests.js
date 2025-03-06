@@ -9,7 +9,6 @@ const guestSchema = new mongoose.Schema({
     address: String,
     relationship: String,
     attendance: { type: Boolean, default: false },
-    tableId: { type: Schema.Types.ObjectId, ref: "Table", default: null },
 });
 
 module.exports = mongoose.model("Guest", guestSchema);
