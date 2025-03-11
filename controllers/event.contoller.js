@@ -6,13 +6,13 @@ exports.createEvent = async (req, res) => {
         await event.save();
         res.status(201).json(event);
     } catch (error) {
-        res.status(400).json({ message: error.message }); // Sử dụng 400
+        res.status(400).json({ message: error.message });
     }
 };
 //Find tat ca cac su kien
 exports.findAllEvent = async (req, res) => {
     try {
-        const events = await Event.find().exec(); // Thêm .exec()
+        const events = await Event.find().exec();
         res.json(events);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -34,7 +34,10 @@ exports.searchEventById = async (req, res) => {
 //update su kien
 exports.updateEvent = async (req, res) => {
     try {
-        const event = await Event.findByIdAndUpdate(req.params.id, req.body, {
+        const eventId = req.params.id;
+        const updateData = { ...req.body };
+        delete updateData._id;
+        const event = await Event.findByIdAndUpdate(eventId, updateData, {
             new: true,
         });
         if (!event) {
