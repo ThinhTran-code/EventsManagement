@@ -1,5 +1,6 @@
 const Event = require("../models/events");
-//Tao Su kien moi
+
+// Tạo sự kiện mới
 exports.createEvent = async (req, res) => {
     try {
         const event = new Event(req.body);
@@ -9,7 +10,8 @@ exports.createEvent = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-//Find tat ca cac su kien
+
+// Tìm tất cả các sự kiện
 exports.findAllEvent = async (req, res) => {
     try {
         const events = await Event.find().exec();
@@ -18,7 +20,8 @@ exports.findAllEvent = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-//Search su kien theo id
+
+// Tìm sự kiện theo id
 exports.searchEventById = async (req, res) => {
     try {
         console.log("req.params.id:", req.params.id);
@@ -31,7 +34,8 @@ exports.searchEventById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-//update su kien
+
+// Update sự kiện
 exports.updateEvent = async (req, res) => {
     try {
         const eventId = req.params.id;
@@ -48,7 +52,8 @@ exports.updateEvent = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-//Delete su kien
+
+// Delete sự kiện
 exports.deleteEvent = async (req, res) => {
     try {
         const event = await Event.findByIdAndDelete(req.params.id);

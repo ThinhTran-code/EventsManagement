@@ -7,11 +7,21 @@ const {
     searchEventById,
     updateEvent,
     deleteEvent,
-} = require("../controllers/event.contoller");
-router.post("/", createEvent);
+} = require("../controllers/event.controller"); // Sửa chính tả controller
+
+// Tạo sự kiện (cần xác thực)
+router.post("/", authMiddleware, createEvent);
+
+// Lấy tất cả sự kiện
 router.get("/", findAllEvent);
+
+// Tìm sự kiện theo ID
 router.get("/:id", searchEventById);
-router.put("/:id", updateEvent);
-router.delete("/:id", deleteEvent);
-router.delete("/:id", authMiddleware);
+
+// Cập nhật sự kiện (cần xác thực)
+router.put("/:id", authMiddleware, updateEvent);
+
+// Xóa sự kiện (cần xác thực)
+router.delete("/:id", authMiddleware, deleteEvent);
+
 module.exports = router;
