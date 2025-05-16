@@ -4,43 +4,52 @@ const jwt = require("jsonwebtoken");
 
 // Register a new user
 exports.register = async (req, res) => {
-    const { username, password, email, role } = req.body; // Thêm email và role (nếu cần)
+    const { username, password, email, role } = req.body;
 
     try {
-        // Check if user already exists
+        console.log("Received data:", req.body);
+
         let user = await User.findOne({ username });
+        // Kiểm tra xem người dùng đã tồn tại chưa
         if (user) {
+            console.log("User already exists: ", user);
             return res.status(400).json({ msg: "User already exists" });
         }
 
-        // Create new user
+        // Tạo người dùng mới
         user = new User({
             username,
             email,
             role,
-            password: await bcrypt.hash(password, 10), // Hash password
+            password,
         });
+
+        console.log("New user created:", user);
 
         await user.save();
 
-        // Create JWT
+        // Tạo JWT
         const payload = {
             user: {
                 id: user.id,
+                role: user.role,
             },
         };
 
         jwt.sign(
             payload,
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET_KEY,
             { expiresIn: "1h" },
             (err, token) => {
-                if (err) throw err;
-                res.status(201).json({ token }); // Send token to client
+                if (err) {
+                    console.error("JWT signing error:", err);
+                    throw err;
+                }
+                res.status(201).json({ token });
             }
         );
     } catch (err) {
-        console.error(err.message); // Log error
+        console.error("Registration error:", err.message);
         res.status(500).json({ msg: "Server error" });
     }
 };
@@ -54,29 +63,35 @@ exports.login = async (req, res) => {
             return res.status(400).json({ msg: "Invalid credentials" });
         }
 
+        // Kiểm tra mật khẩu
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid credentials" });
         }
 
-        // Create JWT
+        // Tạo JWT
         const payload = {
             user: {
                 id: user.id,
+                role: user.role,
             },
         };
 
+        // Tạo JWT và trả token
         jwt.sign(
             payload,
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET_KEY,
             { expiresIn: "1h" },
             (err, token) => {
-                if (err) throw err;
-                res.json({ token }); // Send token to client
+                if (err) {
+                    console.error("JWT signing error:", err);
+                    return res.status(500).json({ msg: "Server error" });
+                }
+                res.json({ token }); // Gửi token cho client
             }
         );
     } catch (err) {
-        console.error(err.message); // Log error
+        console.error("Login error:", err.message); // Log lỗi
         res.status(500).json({ msg: "Server error" });
     }
 };

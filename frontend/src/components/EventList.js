@@ -1,96 +1,86 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import API from "../api";
+import Navbar from "../components/Navbar";
 
-function EventList() {
+const EventList = () => {
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        console.log("Fetching events...");
-        axios
-            .get("/events")
-            .then((res) => {
+        const fetchEvents = async () => {
+            try {
+                const res = await API.get("/events");
                 setEvents(res.data);
-                console.log("Events data:", res.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching events:", error);
-            });
+            } catch (err) {
+                console.error("Lỗi khi lấy sự kiện:", err);
+            }
+        };
+
+        fetchEvents();
     }, []);
 
     return (
-        <div style={{ padding: "50px", textAlign: "center" }}>
-            <h2>OUR EVENTS</h2>
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
-                }}
-            >
-                {events.map((event) => (
-                    <div
-                        key={event._id}
-                        style={{
-                            margin: "20px",
-                            border: "1px solid #ddd",
-                            padding: "20px",
-                            width: "300px",
-                            display: "flex", // Thêm flex để căn chỉnh nội dung
-                            flexDirection: "column", // Nội dung theo chiều dọc
-                            justifyContent: "space-between", // Căn chỉnh giữa các phần tử
-                        }}
-                    >
-                        <div>
-                            {" "}
-                            {/* Container cho thông tin sự kiện */}
-                            <h3>{event.eventName}</h3>
-                            <p>Event Type: {event.eventType}</p>
-                            <p>
-                                Date:{" "}
-                                {new Date(event.date).toLocaleDateString()}
-                            </p>
-                            <p>Location: {event.location}</p>
-                        </div>
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-around",
-                            }}
-                        >
-                            {" "}
-                            {/* Container cho 2 nút */}
-                            <button
-                                style={{
-                                    padding: "8px 16px",
-                                    backgroundColor: "#4CAF50",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                Đăng ký
-                            </button>
+        <>
+            <Navbar />
+            <div style={styles.container}>
+                <h2>Danh sách sự kiện</h2>
+                <Link to="/events/create" style={styles.createButton}>
+                    Tạo sự kiện mới
+                </Link>
+                <div style={styles.eventGrid}>
+                    {events.map((event) => (
+                        <div key={event._id} style={styles.eventItem}>
+                            <h3>{event.title}</h3>
+                            <p>{new Date(event.date).toLocaleDateString()}</p>
+                            <p>{event.location}</p>
                             <Link
                                 to={`/events/${event._id}`}
-                                style={{
-                                    padding: "8px 16px",
-                                    backgroundColor: "#008CBA",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    textDecoration: "none",
-                                }}
+                                style={styles.link}
                             >
-                                Chi tiết
+                                Xem chi tiết
                             </Link>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
-}
+};
+
+const styles = {
+    container: {
+        textAlign: "center",
+        marginTop: "50px",
+        padding: "20px",
+    },
+    createButton: {
+        backgroundColor: "#007bff",
+        color: "white",
+        padding: "10px 20px",
+        textDecoration: "none",
+        borderRadius: "4px",
+        marginBottom: "30px",
+        display: "inline-block",
+    },
+    eventGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)", // Mỗi hàng 3 cột
+        gap: "20px",
+        padding: "10px",
+    },
+    eventItem: {
+        border: "1px solid #ccc",
+        padding: "20px",
+        borderRadius: "8px",
+        textAlign: "left",
+        backgroundColor: "#f9f9f9",
+        boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
+    },
+    link: {
+        color: "#007bff",
+        textDecoration: "none",
+        fontWeight: "bold",
+    },
+};
 
 export default EventList;

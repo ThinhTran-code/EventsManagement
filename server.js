@@ -1,28 +1,21 @@
+require("dotenv").config(); // Thêm dòng này để tải tệp .env
+
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 9999;
+const PORT = process.env.PORT || 8888;
 const connectionDB = require("./config/database");
-const Guest = require("./models/guests");
-const Event = require("./models/events");
-const User = require("./models/users");
-const Service = require("./models/services");
-const Payment = require("./models/payments");
-const Review = require("./models/reviews");
+const cors = require("cors");
 const eventRoute = require("./routes/eventRoute");
-const guestRoute = require("./routes/guestRoute");
+
 const userRoute = require("./routes/userRoute");
-const paymentRoute = require("./routes/paymentRoute");
-const reviewRoute = require("./routes/reviewRoute");
-const serviceRoute = require("./routes/serviceRoute");
-require("dotenv").config();
+app.use(cors());
+
 connectionDB();
 app.use(express.json());
 app.use("/events", eventRoute);
-app.use("/guests", guestRoute);
+
 app.use("/user", userRoute);
-app.use("/payment", paymentRoute);
-app.use("/review", reviewRoute);
-app.use("/service", serviceRoute);
+
 app.listen(PORT, () => {
     console.log(`Server runing on PORT ${PORT} `);
 });

@@ -3,11 +3,24 @@ const Event = require("../models/events");
 // Tạo sự kiện mới
 exports.createEvent = async (req, res) => {
     try {
-        const event = new Event(req.body);
-        await event.save();
-        res.status(201).json(event);
+        const { title, description, date, location } = req.body;
+
+        const newEvent = new Event({
+            title,
+            description,
+            date,
+            location,
+            createdBy: req.user.id, // Lưu id của admin tạo sự kiện
+        });
+
+        await newEvent.save();
+        res.status(201).json({
+            message: "Event created successfully",
+            event: newEvent,
+        });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.error("Create event error:", error);
+        res.status(500).json({ message: "Server error" });
     }
 };
 
@@ -53,15 +66,14 @@ exports.updateEvent = async (req, res) => {
     }
 };
 
-// Delete sự kiện
+// Xóa sự kiện (Admin Only)
 exports.deleteEvent = async (req, res) => {
     try {
-        const event = await Event.findByIdAndDelete(req.params.id);
-        if (!event) {
-            res.status(404).json({ message: "Event Not Found" });
-        }
-        res.json({ message: "Delete successfully" });
+        const eventId = req.params.id;
+        await Event.findByIdAndDelete(eventId);
+        res.status(200).json({ message: "Event deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Delete event error:", error);
+        res.status(500).json({ message: "Server error" });
     }
 };

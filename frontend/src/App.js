@@ -1,35 +1,55 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import Routes
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import EventPage from "./pages/EventPage";
-import AdminPage from "./pages/AdminPage";
-import LoginPage from "./pages/LoginPage";
-import EventList from "./components/EventList";
-import RegisterPage from "./pages/RegisterPage";
-import Contact from "./components/Contact";
+import UserManagementPage from "./pages/UserManagementPage";
+import CreateEventPage from "./pages/CreateEventPage";
+import { AuthProvider } from "./utils/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import EventDetail from "./components/EventDetail";
+import UserDetail from "./pages/UserDetai";
 
-function App() {
+export default function App() {
     return (
-        <Router>
-            <Navbar />
-            <Hero />
-            <Routes>
-                {" "}
-                {/* Sử dụng Routes thay vì Switch */}
-                <Route exact path="/" element={<HomePage />} />{" "}
-                {/* Sử dụng element thay vì component */}
-                <Route path="/events" element={<EventList />} />
-                <Route path="/events/:id" element={<EventPage />} />
-                <Route path="/admin" element={<AdminPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-            </Routes>
-            <Contact />
-        </Router>
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route
+                        path="/events"
+                        element={
+                            <ProtectedRoute>
+                                <EventPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    {/* Định nghĩa route mới cho trang tạo sự kiện */}
+                    <Route
+                        path="/events/create"
+                        element={
+                            <ProtectedRoute allowedRoles={["admin"]}>
+                                <CreateEventPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/users"
+                        element={
+                            <ProtectedRoute>
+                                <UserManagementPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/user/:id" element={<UserDetail />} />
+                    <Route path="/events/:id" element={<EventDetail />} />
+                </Routes>
+            </Router>
+        </AuthProvider>
     );
 }
-
-export default App;

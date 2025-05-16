@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
+const adminMiddleware = require("../middleware/admin");
 const {
     createEvent,
     findAllEvent,
@@ -10,7 +11,7 @@ const {
 } = require("../controllers/event.controller"); // Sửa chính tả controller
 
 // Tạo sự kiện (cần xác thực)
-router.post("/", authMiddleware, createEvent);
+router.post("/", authMiddleware, adminMiddleware, createEvent);
 
 // Lấy tất cả sự kiện
 router.get("/", findAllEvent);
@@ -19,9 +20,9 @@ router.get("/", findAllEvent);
 router.get("/:id", searchEventById);
 
 // Cập nhật sự kiện (cần xác thực)
-router.put("/:id", authMiddleware, updateEvent);
+router.put("/:id", authMiddleware, adminMiddleware, updateEvent);
 
 // Xóa sự kiện (cần xác thực)
-router.delete("/:id", authMiddleware, deleteEvent);
+router.delete("/:id", authMiddleware, adminMiddleware, deleteEvent);
 
 module.exports = router;

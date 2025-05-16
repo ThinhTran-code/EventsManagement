@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const adminMiddleware = require("../middleware/admin");
+const authMiddleware = require("../middleware/authMiddleware");
 const {
     register,
     login,
@@ -16,10 +18,10 @@ router.post("/register", register);
 router.post("/login", login);
 
 // Get all users
-router.get("/", findAllUser);
+router.get("/", authMiddleware, adminMiddleware, findAllUser);
 
 // Get user by ID
-router.get("/:id", findUserById);
+router.get("/:id", authMiddleware, adminMiddleware, findUserById);
 
 // Update user
 router.put("/:id", updateUser);
